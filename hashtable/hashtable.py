@@ -1,3 +1,5 @@
+from linked_list import LinkedList
+
 class HashTableEntry:
     """
     Linked List hash table key/value pair
@@ -23,9 +25,10 @@ class HashTable:
     def __init__(self, capacity):
         # Your code here
         self.capacity = capacity
-        self.storage = [None] * capacity
-        self.num_items = 0
-        self.load_factor = 0
+        self.storage = [LinkedList()] * capacity
+        # self.num_items = 0
+        # self.load_factor = 0
+        self.records = 0
 
 
     def get_num_slots(self):
@@ -39,16 +42,12 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        self.capacity
 
-    def get_load_factor(self):
-        """
-        Return the load factor for this hash table.
+        return self.records / self.capacity
 
-        Implement this.
-        """
+   # def get_load_factor(self):
         # Your code here
-        return self.load_factor / self.capacity
+   #     return self.load_factor / self.capacity
 
 
     def fnv1(self, key):
@@ -91,25 +90,37 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
         index = self.hash_index(key)
-        if self.storage[index] == None:
-            self.storage[index] = HashTableEntry(key, value)
-            self.load_factor += 1
+        cur = self.storage[index].head
 
-        else:
-            node = self.storage[index]
-            if node.key == key:
-                node.value = value
+        while cur:
+            if cur.key == key:
+                cur.value = value
 
-            else:
-                while node.next != None and node.key != key:
-                    node = node.next
-                node.next = HashTableEntry(key, value)
-                self.load_factor += 1
+            cur = cur.next
 
-        if self.get_load_factor() > 0.7:
-            self.resize(self.capacity * 2)
+        entry = HashTableEntry(key, value)
+        self.storage[index].insert_at_head(entry)
+        self.records += 1
+
+        # index = self.hash_index(key)
+        # if self.storage[index] == None:
+        #    self.storage[index] = HashTableEntry(key, value)
+        #    self.load_factor += 1
+
+        # else:
+        #    node = self.storage[index]
+        #    if node.key == key:
+        #        node.value = value
+
+        #    else:
+        #        while node.next != None and node.key != key:
+        #            node = node.next
+        #        node.next = HashTableEntry(key, value)
+        #        self.load_factor += 1
+
+        # if self.get_load_factor() > 0.7:
+        #    self.resize(self.capacity * 2)
 
 
     def delete(self, key):
@@ -171,7 +182,16 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        pass
+        old_data = self.storage
+        self.storage = [None] * new_capacity
+        self.capacity = new_capacity
+        self.load = 0
+
+        for item in old_data:
+            while item:
+                self.put(item.key, item.value)
+                item = item.next
+
 
 if __name__ == "__main__":
     ht = HashTable(8)
