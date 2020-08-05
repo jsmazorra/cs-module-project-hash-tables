@@ -43,11 +43,11 @@ class HashTable:
         """
         # Your code here
 
-        return self.records / self.capacity
+        return self.capacity
 
-   # def get_load_factor(self):
+    def get_load_factor(self):
         # Your code here
-   #     return self.load_factor / self.capacity
+        return self.records / self.capacity
 
 
     def fnv1(self, key):
@@ -131,25 +131,27 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        index = self.hash_index(key)
-        if self.storage[index] == None:
-            return None
+        self.put(key, None)
+        self.records -= 1
+
+        # index = self.hash_index(key)
+        # if self.storage[index] == None:
+        #     return None
             
-        elif self.storage[index].key == key:
-            self.storage[index] = None
-            self.load_factor -= 1
+        # elif self.storage[index].key == key:
+        #     self.storage[index] = None
+        #     self.load_factor -= 1
 
-        elif (self.storage[index].key != key) and (self.storage[index].next != None):
-            prev = self.storage[index]
-            curr = self.storage[index].next
+        # elif (self.storage[index].key != key) and (self.storage[index].next != None):
+        #     prev = self.storage[index]
+        #     curr = self.storage[index].next
 
-            while curr.key != key and curr.next != None:
-                prev, curr = curr, curr.next
+        #     while curr.key != key and curr.next != None:
+        #         prev, curr = curr, curr.next
 
-            if curr.key == key:
-                prev.next = curr.next
-                self.load_factor -= 1
+        #     if curr.key == key:
+        #         prev.next = curr.next
+        #         self.load_factor -= 1
 
 
     def get(self, key):
@@ -161,17 +163,26 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        index = self.hash_index(key) 
-        node = self.storage[index]
+        index = self.hash_index(key)
+        cur = self.storage[index].head
 
-        if node == None:
-            return node
+        while cur:
+            if cur.key == key:
+                return cur.value
+            cur = cur.next
 
-        while node.key != key and node.next != None:
-            node = node.next
+        return None
+         
+        # node = self.storage[index]
 
-        if node.key == key:
-            return node.value
+        # if node == None:
+        #     return node
+
+        # while node.key != key and node.next != None:
+        #     node = node.next
+
+        # if node.key == key:
+        #     return node.value
 
 
     def resize(self, new_capacity):
@@ -182,15 +193,26 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        old_data = self.storage
-        self.storage = [None] * new_capacity
-        self.capacity = new_capacity
-        self.load = 0
+        if self.get_load_factor() >= 0.7:
+            old_storage = self.storage
+            self.storage = [LinkedList()] * new_capacity
+            for record in old_storage:
+                cur = record.head
+                while cur:
+                    self.put(cur.key, cur.value)
+                    cur = cur.next
 
-        for item in old_data:
-            while item:
-                self.put(item.key, item.value)
-                item = item.next
+            self.capacity = new_capacity
+
+        # old_data = self.storage
+        # self.storage = [None] * new_capacity
+        # self.capacity = new_capacity
+        # self.load = 0
+
+        # for item in old_data:
+        #     while item:
+        #         self.put(item.key, item.value)
+        #         item = item.next
 
 
 if __name__ == "__main__":
