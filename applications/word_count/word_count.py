@@ -1,5 +1,40 @@
 def word_count(s):
     # Your code here
+    ignore_chars = [
+        '"',
+        ":",
+        ";",
+        ",",
+        ".",
+        "-",
+        "+",
+        "=",
+        "/",
+        "\\",
+        "|",
+        "[",
+        "]",
+        "{",
+        "}",
+        "(",
+        ")",
+        "*",
+        "^",
+        "&",
+    ]
+
+    s = s.lower()
+
+    for char in ignore_chars:
+        s = s.replace(char, "")
+    counts = {}
+    split = s.split()
+    for word in split:
+        if word in counts.keys():
+            counts[word] += 1
+        else:
+            counts[word] = 1
+    return counts
 
 
 
